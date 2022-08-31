@@ -1,4 +1,4 @@
-# Hackernaut
+# Hackernaut 🧑‍🚀
 Set of smart contracts for hacking the OpenZeppelin [Ethernaut game](https://ethernaut.openzeppelin.com/)
 
 ### Getting Started
