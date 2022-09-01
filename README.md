@@ -6,7 +6,7 @@ Set of smart contracts for hacking the OpenZeppelin [Ethernaut game](https://eth
 
 Happy hacking! 😄
 
-### Getting Started
+## Getting Started
 
 1. Create an [Alchemy](https://www.alchemy.com/) account.
 2. Create a testing Rinkeby testnet account and feed it with some RinkebyETH using the [Alchemy Faucet](https://rinkebyfaucet.com/).
@@ -18,7 +18,7 @@ ALCHEMY_API_KEY= # Your Alchemy API Key
 RINKEBY_PRIVATE_KEY= # Private key from the Rinkeby testnet account
 ```
 
-### Scripts
+## Scripts
 Before hacking each level you must setup the `VICTIM_ADDRESS` env variable previously mentioned. Then, you must run the yarn deploy script according to the level:
 
 ```shell
@@ -30,21 +30,21 @@ After this, you must harcode the contract address in the respective script by ov
 yarn start:<level_name>
 ```
 
-### Solutions
+## Solutions
 
-#### 1. Hello Ethernaut
+### 1. Hello Ethernaut
 Just follow the steps and you'll get there.
 
 ---
 
-#### 2. Fallback
+### 2. Fallback
 This level requires 2 steps to complete as described:
 
 >You will beat this level if
 >1. you claim ownership of the contract
 >2. you reduce its balance to 0
 
-##### Claiming the ownership
+#### Claiming the ownership
 The trick here is to use the fallback `receive` function to get the ownership of the contract.
 
 ```sol
@@ -77,7 +77,7 @@ Now if the transaction was successful, we must be the new owners of this contrac
 ```js
 await contract.owner().then(owner => owner === player)
 ```
-##### Reducing the balance to 0
+#### Reducing the balance to 0
 The way to reduce the balance to 0 is by using the `withdraw` function, which sends all the current balance to the owner.
 
 ```sol
@@ -92,3 +92,32 @@ We are the owners of the contract, let's take those coins!
 await contract.withdraw()
 ```
 ---
+
+### 3. Fallout
+
+In this contract there is a typo (not very visible due to the text font) in the 'constructor' function. Wich means that its name does not match with the contract name.
+
+```sol
+
+contract Fallout {
+
+  //...
+
+  /* constructor */
+  function Fal1out() public payable {
+    owner = msg.sender;
+    allocations[owner] = msg.value;
+  }
+```
+
+Therefore this is just a regular public function that can be called by anyone.
+
+```js
+await contract.Fal1out({ value: 1 });
+```
+
+And we are done!
+
+---
+
+### 4. Coin Flip
