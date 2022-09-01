@@ -164,3 +164,26 @@ function changeOwner(address _owner) public {
 This means that we can satisfy the condition `(tx.origin != msg.sender)` by setting up a contract between our account call and the contract call.
 
 [Here](https://github.com/MCarlomagno/hackernaut/blob/main/contracts/Telephone.sol) is the code of the contract we are going to use, you just have to deploy it and call `claimOwnership` function.
+
+---
+
+### 5. Token
+
+Here we can hack the contract by exploiting the `uint` data type design. Since it is unsigned by definition, we cannot convert it into a negative number, then the `require` statement will always be satisfied no matter what positive value we send on the `_value` parameter.
+
+```sol
+  require(balances[msg.sender] - _value >= 0);
+```
+
+Then if we substract a greater uint number from a uint we will produce an arithmetic underflow.
+
+```sol
+function transfer(address _to, uint _value) public returns (bool) {
+  require(balances[msg.sender] - _value >= 0);
+  balances[msg.sender] -= _value;
+  balances[_to] += _value;
+  return true;
+}
+```
+
+If you send as parameter any random address (different than yours) as a `_to` parameter and a `21` as a `_value` parameter. Your balance account will be `uint 20 - uint 21 = 2^256-1`.
