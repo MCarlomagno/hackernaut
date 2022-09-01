@@ -116,6 +116,12 @@ Therefore this is just a regular public function that can be called by anyone.
 await contract.Fal1out({ value: 1 });
 ```
 
+then you can check the ownership of the contract
+
+```js
+await contract.owner().then(owner => owner === player)
+```
+
 And we are done!
 
 ---
