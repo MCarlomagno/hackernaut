@@ -4,6 +4,8 @@ Set of smart contracts for hacking the OpenZeppelin [Ethernaut game](https://eth
 > this repository only contains the contracts that solve the levels 
 > that **require** a Smart Contract to be solved.
 
+Happy hacking! 😄
+
 ### Getting Started
 
 1. Create an [Alchemy](https://www.alchemy.com/) account.
@@ -20,7 +22,7 @@ RINKEBY_PRIVATE_KEY= # Private key from the Rinkeby testnet account
 Before hacking each level you must setup the `VICTIM_ADDRESS` env variable previously mentioned. Then, you must run the yarn deploy script according to the level:
 
 ```shell
-yarn deploy:<level_name>
+yarn deploy -- <level_name>
 ```
 After this, you must harcode the contract address in the respective script by overriding the `contractAddress` variable. Once done, run the following:
 
@@ -28,12 +30,12 @@ After this, you must harcode the contract address in the respective script by ov
 yarn start:<level_name>
 ```
 
-Happy hacking! 😄
-
 ### Solutions
 
 #### 1. Hello Ethernaut
 Just follow the steps and you'll get there.
+
+---
 
 #### 2. Fallback
 This level requires 2 steps to complete as described:
@@ -51,7 +53,7 @@ The trick here is to use the fallback `receive` function to get the ownership of
     owner = msg.sender;
   }
 ```
-In order to get there, we must statisfy 2 conditions: `msg.value` must be greater than zero and our account must have been contributed.
+In order to archieve this, we must statisfy 2 conditions: `msg.value` must be greater than zero and our account must have contributed.
 
 So before calling the fallback `receive` function, we need to make a contribution to the contract. We can do so as follows:
 
@@ -70,7 +72,7 @@ Now we can claim the ownership of the contract calling the fallback `receive` fu
 ```js
 await contract.sendTransaction({ value: 1 })
 ```
-Now if the transaction was successful, we must be the new owners of this contract lets check that.
+Now if the transaction was successful, we must be the new owners of this contract, let's check that.
 
 ```js
 await contract.owner().then(owner => owner === player)
@@ -89,3 +91,4 @@ We are the owners of the contract, let's take those coins!
 ```js
 await contract.withdraw()
 ```
+---
