@@ -1,12 +1,11 @@
 # Hackernaut 🧑‍🚀
-Set of smart contracts for hacking the OpenZeppelin [Ethernaut game](https://ethernaut.openzeppelin.com/)
-> **Note**: Not all the levels can be solved by creating a smart contract,
-> this repository only contains the contracts that solve the levels 
-> that **require** a Smart Contract to be solved.
+Set of smart contracts and documentation for hacking the OpenZeppelin [Ethernaut game](https://ethernaut.openzeppelin.com/)
+> **Note**: Not all the levels can be solved by creating a smart contract.
+> This repository contains the contracts that solve the levels that **require** a smart contract to be solved and some steps to hack the rest of them.
 
 Happy hacking! 😄
 
-## Getting Started
+## Smart Contracts setup
 
 1. Create an [Alchemy](https://www.alchemy.com/) account.
 2. Create a testing Rinkeby testnet account and feed it with some RinkebyETH using the [Alchemy Faucet](https://rinkebyfaucet.com/).
@@ -132,9 +131,9 @@ On this level we are going to exploit the pseudo-randomness of smart contracts.
 uint256 blockValue = uint256(blockhash(block.number.sub(1)));
 ```
 
-Turns out that the `blockValue` is totally deterministic on a given block, which means that we can replicate this value using another smart contract and calling the function `guess` from there.
+Turns out that the `blockValue` is totally deterministic for a given block, which means that we can replicate this value using another smart contract and calling the function `guess` from there.
 
-The code of the smart contract is [here](https://github.com/MCarlomagno/hackernaut/blob/main/contracts/CoinFlip.sol) where `victimAddress` is the address of the contract instance.
+The code of the smart contract is [here](https://github.com/MCarlomagno/hackernaut/blob/main/contracts/CoinFlip.sol).
 
 As a summary, the following function will guess the coin side successfully in every single try:
 
