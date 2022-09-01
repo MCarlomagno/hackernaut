@@ -5,7 +5,9 @@
   "license": "MIT",
   "scripts": {
     "start:coinflip": "ts-node scripts/coinflip/coinflip.ts --network rinkeby",
-    "deploy:coinflip": "ts-node scripts/coinflip/deploy.ts --network rinkeby"
+    "start:telephone": "ts-node scripts/telephone/telephone.ts --network rinkeby",
+    "start:force": "ts-node scripts/force/force.ts --network rinkeby",
+    "deploy": "ts-node scripts/coinflip/deploy.ts --network rinkeby"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",

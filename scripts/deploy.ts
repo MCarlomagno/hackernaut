@@ -9,12 +9,15 @@ async function main() {
   const address = process.env.VICTIM_ADDRESS;
   if (!address) throw Error("You must setup the VICTIM_ADDRESS env variable");
 
-  const Telephone = await ethers.getContractFactory('Telephone');
-  const telephone = await Telephone.deploy(address);
+  const contractName = process.argv[3];
+  if (!contractName) throw Error("You must provide a contractName parameter (yarn deploy -- <contract_name>)");
 
-  await telephone.deployed();
+  const Contract = await ethers.getContractFactory(contractName);
+  const contract = await Contract.deploy(address);
 
-  console.log(`Telephone was deployed to ${telephone.address} with victim_address ${address}`);
+  await contract.deployed();
+
+  console.log(`${contractName} was deployed to ${contract.address} with victimAddress = ${address}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
