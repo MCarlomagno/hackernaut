@@ -146,3 +146,21 @@ function guess() public {
 }
 ```
 Then you just have to call your `guess` function 10 times.
+
+---
+
+### 5. Telephone
+
+The `msg.sender` is the address of the function caller (can be whether an ethereum account address or an smart contract address), and the `tx.origin` is the address of the account that originated the transaction.
+
+```sol
+function changeOwner(address _owner) public {
+  if (tx.origin != msg.sender) {
+    owner = _owner;
+  }
+}
+```
+
+This means that we can satisfy the condition `(tx.origin != msg.sender)` by setting up a contract between our account call and the contract call.
+
+[Here](https://github.com/MCarlomagno/hackernaut/blob/main/contracts/Telephone.sol) is the code of the contract we are going to use, you just have to deploy it and call `claimOwnership` function.
