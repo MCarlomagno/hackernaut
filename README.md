@@ -253,3 +253,27 @@ And finally self-destroy it calling `takeMyMoney` function pointing to the insta
 await yourContract.takeMyMoney();
 ```
 
+---
+
+### 8. Vault
+
+The `private` keyword does not mean that the value of that variable is not visible by anyone. By design, the state of the blockchain is completely visible globally. Which means that by doing some research we can get the value of the `password` variable on-chain.
+
+One way to get that value is by browsing [Etherscan](https://rinkeby.etherscan.io/) and searching by the hash of the contract created.
+
+Go the the `Contract` tab, and under the` Contract Creation Code` section you will see the encoded information (bytecode) that represents the data of the `contructor` call with its parameters. 
+
+The bytecode is the hexadecimal representation of the Solidity code, remember that a byte is a set of 8 bits and a single hex is represented by 4 bits (`2^4 = 16`). So that means that a byte in this hexadecimal representation is composed by 2 characters (`4 bits + 4 bits = 8 bits = 1 byte`)
+
+Since the `password` variable is bytes32 (`8 bits (byte) * 32 = 4 bits (hex) * 64`). So we must take the last 64 characters of the code, in this case `41ed2f1d39cad24fdf2b1c64736f6c63430006030033412076657279207374726f6e67207365637265742070617373776f7264203a29`.
+
+The way to send an hexadecimal value to the contract as a parameter is by adding a `0x` prefix:
+
+```js
+await contract.unlock('0x41ed2f1d39cad24fdf2b1c64736f6c63430006030033412076657279207374726f6e67207365637265742070617373776f7264203a29');
+```
+Then we can check if the contract was unlocked
+
+```js
+await contract.locked();
+```
