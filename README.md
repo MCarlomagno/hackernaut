@@ -255,10 +255,11 @@ await yourContract.takeMyMoney();
 
 ---
 
-### 8. Vault
+### 9. Vault
 
 The `private` keyword does not mean that the value of that variable is not visible by anyone. By design, the state of the blockchain is completely visible globally. Which means that by doing some research we can get the value of the `password` variable on-chain.
 
+#### Solution #1
 One way to get that value is by browsing [Etherscan](https://rinkeby.etherscan.io/) and searching by the hash of the contract created.
 
 ![Vault screenshot](/docs/vault1.png?raw=true)
@@ -277,6 +278,26 @@ The way to send an hexadecimal value to the contract as a parameter is by adding
 await contract.unlock('0x41ed2f1d39cad24fdf2b1c64736f6c63430006030033412076657279207374726f6e67207365637265742070617373776f7264203a29');
 ```
 Then we can check if the contract was unlocked
+
+```js
+await contract.locked();
+```
+
+#### Solution #2
+
+There is also a much simpler way (but much less fun), this is just reading the first slot storage using the handy `getStorageAt` function of the web3 library:
+
+```js
+const password = await web3.eth.getStorageAt(contract.address, 1);
+```
+
+And then:
+
+```js
+contract.unlock(password);
+```
+
+Finally we can check if the contract was unlocked
 
 ```js
 await contract.locked();
