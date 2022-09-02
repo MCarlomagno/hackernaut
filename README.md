@@ -261,7 +261,11 @@ The `private` keyword does not mean that the value of that variable is not visib
 
 One way to get that value is by browsing [Etherscan](https://rinkeby.etherscan.io/) and searching by the hash of the contract created.
 
-Go the the `Contract` tab, and under the` Contract Creation Code` section you will see the encoded information (bytecode) that represents the data of the `contructor` call with its parameters. 
+![Vault screenshot](/docs/vault1.png?raw=true)
+
+Go the the `Contract` tab, and under the` Contract Creation Code` section you will see the encoded information (bytecode) that represents the data of the `contructor` call with its parameters.
+
+![Vault screenshot 2](/docs/vault2.png?raw=true)
 
 The bytecode is the hexadecimal representation of the Solidity code, remember that a byte is a set of 8 bits and a single hex is represented by 4 bits (`2^4 = 16`). So that means that a byte in this hexadecimal representation is composed by 2 characters (`4 bits + 4 bits = 8 bits = 1 byte`)
 
