@@ -408,7 +408,7 @@ This line will trigger the `receive` function on our attacker contract and start
 
 ---
 
-### 11. Elevator
+### 12. Elevator
 
 In this level we have an `Elevator` contract that (supposedly) does not allow to reach the last floor of the `Building` that calls it.
 The `Elevator` delegates the caller contract the implementation of the `isLastFloor` function.
@@ -473,7 +473,7 @@ And we are done, [see the full code here](https://github.com/MCarlomagno/hackern
 
 ---
 
-### 11. Privacy
+### 13. Privacy
 
 This level requires a better understanding about how Solidity optimizes storage slots storing deployed smart contracts data. We can figure out the hex value of each slot using:
 
