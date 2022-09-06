@@ -530,3 +530,75 @@ After setting up the contract sending the vicim's address and our hex 'key'. We 
 ```js
 await myContact.hack();
 ```
+
+---
+
+### 14. Gatekeeper One
+
+In order to break this contract, our data needs to pass throug different conditions (3 gates) in order to prevent reverting before we van claim ourselves entrant. [See contract code here](https://github.com/MCarlomagno/hackernaut/blob/main/contracts/GatekeeperOne.sol).
+
+#### Gate one
+
+```sol
+modifier gateOne() {
+  require(msg.sender != tx.origin);
+  _;
+}
+```
+
+In order to satisfy this condition, we just need to setup a contract as a middleman between the origin and the function call as we did before.
+
+#### Gate two
+
+```sol
+modifier gateTwo() {
+  require(gasleft().mod(8191) == 0);
+  _;
+}
+```
+
+This is especially difficult because the only path to solve this one is by debugging the solidity opcodes in etherscan and figuring out **exactly** where we are using the gasLeft() result value in our require statement.
+
+Fortunatelly there is a special opcode that is used for estimating the gas left called **GAS** [see documentation about opcodes](https://ethereum.org/en/developers/docs/evm/opcodes/).
+
+So the steps to figure the exact gas to send are:
+1. Send a transaction with any arbitrary gas.
+2. Go the the debug transaction section on etherscan and find the GAS opcode in the stack trace.
+3. In the next line (PUSH2 opcode) you will see the gasLeft *X* at that moment.
+4. Use X to calculate the exact amount of gas needed send to the function call. eg: *gasToSend = gasSent + (81910 - X)*
+5. Now you will be able to send the right amount of gas for that function call.
+
+#### Gate three
+
+```sol
+  modifier gateThree(bytes8 _gateKey) {
+      require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+      require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+      require(uint32(uint64(_gateKey)) == uint16(tx.origin), "GatekeeperOne: invalid gateThree part three");
+    _;
+  }
+```
+This gate requires some understanding about `uintX` conversions. We will receive a `bytes8` input and cast this value many times in order to satisfy a few conditions.
+
+```sol
+require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), "GatekeeperOne: invalid gateThree part one");
+```
+This condition requires `uint32` and `uint16` conversion to be the same, the `uint16` corresponds to the last 4 bytes of the `_key`, and `uint32` the las 8 ones (remember that if we cast a uint16 to uint32 the excedent bytes at the left will be filled with 0). So in order to satisfy this condition we can send a key that looks like `0x...0000ffff`.
+
+```sol
+require(uint32(uint64(_gateKey)) != uint64(_gateKey), "GatekeeperOne: invalid gateThree part two");
+```
+
+This line adds an extra requirement about the next (or previous) 8 characters, they should be different than zero, so the key should look like: `0x1111111100001111`.
+
+```sol
+require(uint32(uint64(_gateKey)) == uint16(tx.origin), "GatekeeperOne: invalid gateThree part three");
+```
+
+Finnally, this line take the last 4 characters and compare them with the tx.origin address (your address) last 4. So the key should look like: (eg: last 4 characters of your address 'AB12') `0x111111110000AB12`.
+
+Once you deployed the contract, just call:
+
+```js
+await yourContract.enter("0x111111110000AB12", 82164);
+```
