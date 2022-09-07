@@ -605,7 +605,7 @@ await yourContract.enter("0x111111110000AB12", 82164);
 
 ---
 
-### 14. Gatekeeper One
+### 15. Gatekeeper Two
 
 As we did in the previous level, we need to satisfy a bunch of conditions to hack this contract.
 
