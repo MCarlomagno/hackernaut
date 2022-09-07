@@ -4,9 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start:coinflip": "ts-node scripts/coinflip/coinflip.ts --network rinkeby",
-    "start:telephone": "ts-node scripts/telephone/telephone.ts --network rinkeby",
-    "start:force": "ts-node scripts/force/force.ts --network rinkeby",
+    "start": "ts-node scripts/level.ts --network rinkeby",
     "deploy": "ts-node scripts/coinflip/deploy.ts --network rinkeby"
   },
   "devDependencies": {

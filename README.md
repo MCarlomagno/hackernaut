@@ -26,7 +26,7 @@ yarn deploy -- <level_name>
 After this, you must harcode the contract address in the respective script by overriding the `contractAddress` variable. Once done, run the following:
 
 ```shell
-yarn start:<level_name>
+yarn start -- <level_name>
 ```
 
 ## Solutions
