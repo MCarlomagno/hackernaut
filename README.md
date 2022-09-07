@@ -31,23 +31,21 @@ yarn start -- <level_name>
 
 ## Solutions
 
-### Table of content
-
-[1. Hello Ethernaut](#hello-ethernaut) 
-[2. Fallback](#fallback) 
-[3. Fallout](#fallout) 
-[4. Coin Flip](#coinflip) 
-[5. Telephone](#telephone) 
-[6. Token](#token) 
-[7. Delegation](#delegation) 
-[8. Force](#force)
-[9. Vault](#vault) 
-[10. King](#king) 
-[11. Re-entrancy](#reentrancy) 
-[12. Elevator](#elevator)
-[13. Privacy](#privacy) 
-[14. Gatekeeper One](#gatekeeper-one) 
-[14. Gatekeeper Two](#gatekeeper-two)
+ - [1. Hello Ethernaut](#1-hello-ethernaut)
+ - [2. Fallback](#2-fallback)
+ - [3. Fallout](#3-fallout)
+ - [4. Coin Flip](#4-coin-flip)
+ - [5. Telephone](#5-telephone)
+ - [6. Token](#6-token)
+ - [7. Delegation](#7-delegation)
+ - [8. Force](#8-force)
+ - [9. Vault](#9-vault)
+ - [10. King](#10-king)
+ - [11. Re-entrancy](#11-re-entrancy)
+ - [12. Elevator](#12-elevator)
+ - [13. Privacy](#13-privacy)
+ - [14. Gatekeeper One](#14-gatekeeper-one)
+ - [15. Gatekeeper Two](#15-gatekeeper-two)
 
 ### 1. Hello Ethernaut
 
@@ -688,8 +686,3 @@ constructor(address victim) {
 ```
 
 We just create the contract sending the victim address as parameter and that's it!
-
-
-
-
-
