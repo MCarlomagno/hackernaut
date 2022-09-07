@@ -1,4 +1,4 @@
-# Hackernaut 🧑‍🚀
+# Hackernaut 🧑‍🚀 [WIP]
 Set of smart contracts and documentation for hacking the OpenZeppelin [Ethernaut game](https://ethernaut.openzeppelin.com/)
 > **Note**: Not all the levels can be solved by creating a smart contract.
 > This repository contains the contracts that solve the levels that **require** a smart contract to be solved and some steps to hack the rest of them.
@@ -31,7 +31,26 @@ yarn start -- <level_name>
 
 ## Solutions
 
+### Table of content
+
+[1. Hello Ethernaut](#hello-ethernaut) 
+[2. Fallback](#fallback) 
+[3. Fallout](#fallout) 
+[4. Coin Flip](#coinflip) 
+[5. Telephone](#telephone) 
+[6. Token](#token) 
+[7. Delegation](#delegation) 
+[8. Force](#force)
+[9. Vault](#vault) 
+[10. King](#king) 
+[11. Re-entrancy](#reentrancy) 
+[12. Elevator](#elevator)
+[13. Privacy](#privacy) 
+[14. Gatekeeper One](#gatekeeper-one) 
+[14. Gatekeeper Two](#gatekeeper-two)
+
 ### 1. Hello Ethernaut
+
 Just follow the steps and you'll get there.
 
 ---
