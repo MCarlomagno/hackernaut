@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.7.0;
 
 interface ReentranceInterface {
     function withdraw(uint _amount) external;

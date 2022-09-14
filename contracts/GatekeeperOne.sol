@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.7.0;
 
 interface GatekeeperOne {
     function enter(bytes8 _gateKey) external returns (bool);
@@ -8,8 +8,8 @@ interface GatekeeperOne {
 contract GatekeeperOneCheat {
   address public victim;
 
-  event result(bool result, string error);
-  event bytesResult(bool result, bytes error);
+  event Result(bool result, string error);
+  event BytesResult(bool result, bytes error);
 
   constructor(address _victim) {
     victim = _victim;
