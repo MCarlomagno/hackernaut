@@ -48,6 +48,7 @@ yarn start -- <level_name>
  - [15. Gatekeeper Two](#15-gatekeeper-two)
  - [16. Naught Coin](#16-naught-coin)
  - [17. Preservation](#17-preservation)
+ - [18. Recovery](#18-recovery)
 
 ### 1. Hello Ethernaut
 
@@ -730,7 +731,7 @@ await contract.transferFrom(player, player2, await contract.allowance(player, pl
 ```
 ---
 
-### 15. Preservation
+### 17. Preservation
 
 The `delegatecall` method will overwrite the 1st contract slot in the context of the contract that has made the call. 
 Therefore we can change the address of `timeZone1Library` using `setFirstTime` and passing our malicious contract address casted as `uint _time` .
@@ -757,3 +758,19 @@ await contract.setFirstTime(0x0);
 ```
 
 Finnaly, the delegated function will change the ownership of the contract.
+
+---
+
+### 18. Recovery
+
+In this level the contract deployer does not know what is the address of the token created, bue we can easily get that information using Etherscan.
+
+Just put the contract address in the etherscan explorer and check the historic transactions. Among them you will find the one that creates our target contract.
+
+```sol
+function destroyToken(address payable _victim) payable public {
+  SimpleToken(_victim).destroy(payable(msg.sender));
+}
+```
+
+Where `_victim` is the address of the token.
