@@ -793,7 +793,7 @@ PUSH1 0x80 // point the memory slot -> 80f3
 RETURN     // return the pointer value
 ```
 
-As a result we will get the following hex string:
+As a result we will get the following hex string (the first few upcodes correspond to the contract creation):
 
 `
 0x600a600c600039600a6000f3602a60805260206080f3
