@@ -49,6 +49,7 @@ yarn start -- <level_name>
  - [16. Naught Coin](#16-naught-coin)
  - [17. Preservation](#17-preservation)
  - [18. Recovery](#18-recovery)
+ - [19. Magic Number](#19-magic-number)
 
 ### 1. Hello Ethernaut
 
@@ -774,3 +775,41 @@ function destroyToken(address payable _victim) payable public {
 ```
 
 Where `_victim` is the address of the token.
+
+---
+
+### 19. Magic Number
+
+In this level, you cannot create a contract using solidity because that implies to use more opcodes than required, so the most efficient way to launch code to the EVM is by using directly opcodes casted as hex and then send a transaction without a `to` parameter (this will be interpreted as a contract creation).
+
+We need to create a function that will return the number 42. For doing so we need to store this number in memory and then return it. 
+
+```assembly
+PUSH1 0x2a // declare 42 (2a in hex) -> 602a
+PUSH1 0x80 // push it in the slot 0x80 -> 6080
+MSTORE     // store the information -> 5260
+PUSH1 0x20 // size of the stored data -> 2060
+PUSH1 0x80 // point the memory slot -> 80f3
+RETURN     // return the pointer value
+```
+
+As a result we will get the following hex string:
+
+`
+0x600a600c600039600a6000f3602a60805260206080f3
+`
+
+We declare and create the new contract
+
+```js
+const bytecode = '0x600a600c600039600a6000f3602a60805260206080f3';
+web3.eth.sendTransaction({ from: player, data: bytecode });
+```
+
+And as a result we will get the hash of the transaction of the contract creation, searching in etherscan we will find the contract address.
+
+Just set the address as the solver and it will pass.
+
+```js
+contract.setSolver('<your_contract_address>')
+```
