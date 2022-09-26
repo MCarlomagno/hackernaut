@@ -4,6 +4,7 @@
     "func-visibility": ["warn",{"ignoreConstructors":true}],
     "avoid-low-level-calls": "off",
     "no-inline-assembly": "off",
-    "avoid-tx-origin": "off"
+    "avoid-tx-origin": "off",
+    "no-empty-blocks": "off"
   }
 }

