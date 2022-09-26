@@ -50,6 +50,7 @@ yarn start -- <level_name>
  - [17. Preservation](#17-preservation)
  - [18. Recovery](#18-recovery)
  - [19. Magic Number](#19-magic-number)
+ - [20. Alien Codex](#20-alien-codex)
 
 ### 1. Hello Ethernaut
 
@@ -812,4 +813,32 @@ Just set the address as the solver and it will pass.
 
 ```js
 contract.setSolver('<your_contract_address>')
+```
+
+---
+
+### 20. Alien Codex
+
+In this level, the key is to understand how the evm storage works. The contract does not expose any `owner` variable, but it must be there. So in order to check it we need to first scan the storage of the contract.
+
+```js
+web3.eth.getStorageAt(contract.address, 0)
+```
+
+After a little search, we find out that the ower variable is using the slot 0 of the contract, so now we now where is the owner stored.
+
+The second part of the problem is to figure out the way to overwrite this variable, here is where the `codex` array will take place.
+
+The contract exposes a function that allow us to write (and increase) the codex array
+
+```solidity
+function revise(uint i, bytes32 _content) contacted public {
+  codex[i] = _content;
+}
+```
+
+So this way  we can produce an overflow of the contract storage overwriting the owner variable using the array. But obviously first we need to call `make_contact` for passing the `contacted` modifier in order to do so.
+
+```js
+contract.make_contact();
 ```
