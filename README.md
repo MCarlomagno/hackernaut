@@ -17,18 +17,6 @@ ALCHEMY_API_KEY= # Your Alchemy API Key
 RINKEBY_PRIVATE_KEY= # Private key from the Rinkeby testnet account
 ```
 
-## Scripts
-Before hacking each level you must setup the `VICTIM_ADDRESS` env variable previously mentioned. Then, you must run the yarn deploy script according to the level:
-
-```shell
-yarn deploy -- <level_name>
-```
-After this, you must harcode the contract address in the respective script by overriding the `contractAddress` variable. Once done, run the following:
-
-```shell
-yarn start -- <level_name>
-```
-
 ## Solutions
 
  - [1. Hello Ethernaut](#1-hello-ethernaut)
