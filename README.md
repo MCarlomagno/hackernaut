@@ -1126,5 +1126,5 @@ Balances now
 And finnally we can drain the token2 balance of the contract by doing
 
 ```js
-await contract.swap(token3, token2, 200)
+swap(token3, token2, 200)
 ```
