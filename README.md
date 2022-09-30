@@ -19,38 +19,38 @@ RINKEBY_PRIVATE_KEY= # Private key from the Rinkeby testnet account
 
 ## Solutions
 
- - [1. Hello Ethernaut](#1-hello-ethernaut)
- - [2. Fallback](#2-fallback)
- - [3. Fallout](#3-fallout)
- - [4. Coin Flip](#4-coin-flip)
- - [5. Telephone](#5-telephone)
- - [6. Token](#6-token)
- - [7. Delegation](#7-delegation)
- - [8. Force](#8-force)
- - [9. Vault](#9-vault)
- - [10. King](#10-king)
- - [11. Re-entrancy](#11-re-entrancy)
- - [12. Elevator](#12-elevator)
- - [13. Privacy](#13-privacy)
- - [14. Gatekeeper One](#14-gatekeeper-one)
- - [15. Gatekeeper Two](#15-gatekeeper-two)
- - [16. Naught Coin](#16-naught-coin)
- - [17. Preservation](#17-preservation)
- - [18. Recovery](#18-recovery)
- - [19. Magic Number](#19-magic-number)
- - [20. Alien Codex](#20-alien-codex)
- - [21. Denial](#21-denial)
- - [22. Shop](#22-shop)
- - [23. Dex](#23-dex)
- - [24. Dex Two](#24-dex-two)
+ - [0. Hello Ethernaut](#1-hello-ethernaut)
+ - [1. Fallback](#2-fallback)
+ - [2. Fallout](#3-fallout)
+ - [3. Coin Flip](#4-coin-flip)
+ - [4. Telephone](#5-telephone)
+ - [5. Token](#6-token)
+ - [6. Delegation](#7-delegation)
+ - [7. Force](#8-force)
+ - [8. Vault](#9-vault)
+ - [9. King](#10-king)
+ - [10. Re-entrancy](#11-re-entrancy)
+ - [11. Elevator](#12-elevator)
+ - [12. Privacy](#13-privacy)
+ - [13. Gatekeeper One](#14-gatekeeper-one)
+ - [14. Gatekeeper Two](#15-gatekeeper-two)
+ - [15. Naught Coin](#16-naught-coin)
+ - [16. Preservation](#17-preservation)
+ - [17. Recovery](#18-recovery)
+ - [18. Magic Number](#19-magic-number)
+ - [19. Alien Codex](#20-alien-codex)
+ - [20. Denial](#21-denial)
+ - [21. Shop](#22-shop)
+ - [22. Dex](#23-dex)
+ - [23. Dex Two](#24-dex-two)
 
-### 1. Hello Ethernaut
+### 0. Hello Ethernaut
 
 Just follow the steps and you'll get there.
 
 ---
 
-### 2. Fallback
+### 1. Fallback
 This level requires 2 steps to complete as described:
 
 >You will beat this level if
@@ -106,7 +106,7 @@ await contract.withdraw();
 ```
 ---
 
-### 3. Fallout
+### 2. Fallout
 
 In this contract there is a typo (not very visible due to the text font) in the 'constructor' function. Wich means that its name does not match with the contract name.
 
@@ -138,7 +138,7 @@ And we are done!
 
 ---
 
-### 4. Coin Flip
+### 3. Coin Flip
 On this level we are going to exploit the pseudo-randomness of smart contracts.
 
 ```sol
@@ -163,7 +163,7 @@ Then you just have to call your `guess` function 10 times.
 
 ---
 
-### 5. Telephone
+### 4. Telephone
 
 The `msg.sender` is the address of the function caller (can be whether an ethereum account address or an smart contract address), and the `tx.origin` is the address of the account that originated the transaction.
 
@@ -181,7 +181,7 @@ This means that we can satisfy the condition `(tx.origin != msg.sender)` by sett
 
 ---
 
-### 6. Token
+### 5. Token
 
 Here we can hack the contract by exploiting the `uint` data type design. Since it is unsigned by definition, we cannot convert it into a negative number, then the `require` statement will always be satisfied no matter what positive value we send on the `_value` parameter.
 
@@ -213,7 +213,7 @@ await contract.balanceOf(player).then(Number);
 ```
 ---
 
-### 7. Delegation
+### 6. Delegation
 
 One important property of `delegatecall` is that executes other contractact's code in the context of the current contract.
 
@@ -240,7 +240,7 @@ await contract.owner().then(owner => owner === player);
 
 ---
 
-### 8. Force
+### 7. Force
 
 Though the standard way to send ether to a Smart Contract is by using some `payable` function (such as the `receive` function), you can force any contract to receive ether in different ways.
 
@@ -269,7 +269,7 @@ await yourContract.takeMyMoney();
 
 ---
 
-### 9. Vault
+### 8. Vault
 
 The `private` keyword does not mean that the value of that variable is not visible by anyone. By design, the state of the blockchain is completely visible globally. Which means that by doing some research we can get the value of the `password` variable on-chain.
 
@@ -319,7 +319,7 @@ await contract.locked();
 
 ---
 
-### 10. King
+### 9. King
 
 The way to beat this level is by taking the throne with an address that will revert the transaction before any other address can become a king.
 
@@ -368,7 +368,7 @@ await yourContract.becomeKing({ value: 1000000000000002 });
 
 ---
 
-### 11. Re-entrancy
+### 10. Re-entrancy
 
 The trick here is tho iterate between the `withdraw` function and our contract `receive` function in order to avoid the
 
@@ -422,7 +422,7 @@ This line will trigger the `receive` function on our attacker contract and start
 
 ---
 
-### 12. Elevator
+### 11. Elevator
 
 In this level we have an `Elevator` contract that (supposedly) does not allow to reach the last floor of the `Building` that calls it.
 The `Elevator` delegates the caller contract the implementation of the `isLastFloor` function.
@@ -487,7 +487,7 @@ And we are done, [see the full code here](https://github.com/MCarlomagno/hackern
 
 ---
 
-### 13. Privacy
+### 12. Privacy
 
 This level requires a better understanding about how Solidity optimizes storage slots storing deployed smart contracts data. We can figure out the hex value of each slot using:
 
@@ -547,7 +547,7 @@ await myContact.hack();
 
 ---
 
-### 14. Gatekeeper One
+### 13. Gatekeeper One
 
 In order to break this contract, our data needs to pass throug different conditions (3 gates) in order to prevent reverting before we van claim ourselves entrant. [See contract code here](https://github.com/MCarlomagno/hackernaut/blob/main/contracts/GatekeeperOne.sol).
 
@@ -619,7 +619,7 @@ await yourContract.enter("0x111111110000AB12", 82164);
 
 ---
 
-### 15. Gatekeeper Two
+### 14. Gatekeeper Two
 
 As we did in the previous level, we need to satisfy a bunch of conditions to hack this contract.
 
@@ -686,7 +686,7 @@ We just create the contract sending the victim address as parameter and that's i
 
 ---
 
-### 16. Naught Coin
+### 15. Naught Coin
 
 If you read carefully the ERC20 contract code, there is a way around to transfer your tokens without using the `transfer` function.
 
@@ -725,7 +725,7 @@ await contract.transferFrom(player, player2, await contract.allowance(player, pl
 ```
 ---
 
-### 17. Preservation
+### 16. Preservation
 
 The `delegatecall` method will overwrite the 1st contract slot in the context of the contract that has made the call. 
 Therefore we can change the address of `timeZone1Library` using `setFirstTime` and passing our malicious contract address casted as `uint _time` .
@@ -755,7 +755,7 @@ Finnaly, the delegated function will change the ownership of the contract.
 
 ---
 
-### 18. Recovery
+### 17. Recovery
 
 In this level the contract deployer does not know what is the address of the token created, bue we can easily get that information using Etherscan.
 
@@ -771,7 +771,7 @@ Where `_victim` is the address of the token.
 
 ---
 
-### 19. Magic Number
+### 18. Magic Number
 
 In this level, you cannot create a contract using solidity because that implies to use more opcodes than required, so the most efficient way to launch code to the EVM is by using directly opcodes casted as hex and then send a transaction without a `to` parameter (this will be interpreted as a contract creation).
 
@@ -809,7 +809,7 @@ contract.setSolver('<your_contract_address>')
 
 ---
 
-### 20. Alien Codex
+### 19. Alien Codex
 
 In this level, the key is to understand how the evm storage works. The contract does not expose any `owner` variable, but it must be there. So in order to check it we need to first scan the storage of the contract.
 
@@ -849,7 +849,7 @@ contract.revise('357076663774356482118879088749846081199922365090741977136285053
 
 ---
 
-### 21. Denial
+### 20. Denial
 
 The key of this level is to understand how the secuence of events occur
 
@@ -888,7 +888,7 @@ await contract.setWithdrawPartner('<your_contract_address>')
 
 ---
 
-### 22. Shop
+### 21. Shop
 
 In this level, the challenge is to implement a contract with a `price()` function that returns a value equals or greater than 100 in the first call and then returns a value below 100.
 
@@ -917,7 +917,7 @@ function buy(address _shop) public {
 
 ---
 
-### 23. Dex
+### 22. Dex
 
 In this level, we have a decentralized exchange contract that counts with `token1` and `token2`. The issue with this contract is that inside the `swap` function, the token price is calculated using the following function.
 
@@ -983,7 +983,7 @@ swap(token2, token1, 45);
 
 ---
 
-### 24. Dex Two
+### 23. Dex Two
 
 If we compare the `swap` method of the previous Dex contract and the current one, we can tell that there is one assertion missing in this one
 
